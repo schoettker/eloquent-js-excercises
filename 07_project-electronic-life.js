@@ -130,6 +130,41 @@ World.prototype.toString = function() {
   return output;
 };
 
+// gives critters chance to act, looks for objects with act method, calls them and carries the action out if it is valid
+World.prototype.turn = function() {
+  var acted = []; // keep track of critters that already had their turn
+  this.grid.forEach(function(critter, vector) {
+    if (critter.act && acted.indexOf(critter) == -1) {
+      acted.push(critter);
+      this.letAct(critter, vector);
+    }
+  }, this);
+};
+
+// allows critters to move if the destinated square is empty(null) and sets the old position of the critter to null
+World.prototype.letAct = function(critter, vector) {
+  var action = critter.act(new View(this, vector));
+  if (action && action.type == 'move') {
+    var dest = this.checkDestination(action, vector);
+    if (dest && this.grid.get(dest) == null) {
+      this.grid.set(vector, null);
+      this.grid.set(dest, critter);
+    }
+  }
+};
+
+World.prototype.checkDestination = function(action, vector) {
+  if (directions.hasOwnProperty(action.direction)) {
+    var dest = vector.plus(directions[action.direction])
+    if (this.grid.isInside(dest)) {
+      return dest; 
+    }
+  };
+};
+
+
+
+
 function Wall() {}
 
 var test = new World(plan, {'#': Wall, "o": BouncingCritter});
