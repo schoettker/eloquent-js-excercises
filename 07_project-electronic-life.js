@@ -40,7 +40,17 @@ Grid.prototype.get = function(vector) {
 Grid.prototype.set = function(vector, value) {
   this.space[vector.x + this.width * vector.y] = value; // set element from space(array) at the corresponding position from the vector to the given value 
 };
-
+// calls a given function f for each element in the grid that isn't null or undefined
+Grid.prototype.forEach = function(f, context) {
+  for (var y = 0; y < this.height; y++) {
+    for (var x = 0; x < this.width; x++){
+      var value = this.space[x + y * this.width];
+      if (value != null) {
+        f.call(context, value, new Vector(x, y));
+      }
+    }
+  }
+};
 // map direction names with coordinate offsets which critters can see around them on the grid
 var directions = {
   "n":  new Vector( 0, -1),
@@ -79,20 +89,49 @@ function elementFromChar(legend, char) {
   if (char == " "){
     return null;
   }
-  var element = new legend[char]();
-  element.originChar = char;
+  var element = new legend[char](); // bracket notation to use the value of char instead of legend.char
+  element.originChar = char; // find out what character the element was originally created from
   return element;
 }
+function charFromElement(element) {
+  if (element == null) {
+    return " ";
+  } else {
+    return element.originChar;
+  }
+}
+
 // the plan gets passed as an argument for the map
 // a grid is assigned to the world object, the width is as long as the first string in the map(plan) array and the height is the amount of entries in map
+// legend is a object describing what the characters mean except for space char which refers to null
 function World(map, legend) {
   var grid = new Grid(map[0].length, map.length);
   this.grid = grid;
   this.legend = legend;
-
+  // sets the element in the grid with the corresponding value & vector for each char in the map
+  // line = current element from array, y = index of current element 
   map.forEach(function(line, y) {
+    // iterates over each character in the line
     for (var x = 0; x < line.length; x++) {
       grid.set(new Vector(x,y), elementFromChar(legend, line[x]))
     }; 
   });
 }
+// builds a maplike string from current worlds state by doing a two-dimensional loop over the grids squares
+World.prototype.toString = function() {
+  var output = "";
+  for (var y = 0; y < this.grid.height; y++) {
+    for (var x = 0; x < this.grid.width; x++) {
+      var element = this.grid.get(new Vector(x, y));
+      output += charFromElement(element);
+    }
+    output += "\n"; // add line break before incrementing y and thus adding a new line
+  } 
+  return output;
+};
+
+function Wall() {}
+
+var test = new World(plan, {'#': Wall, "o": BouncingCritter});
+console.log(test.toString());
+
