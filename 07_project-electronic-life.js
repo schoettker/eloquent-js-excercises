@@ -141,7 +141,7 @@ World.prototype.turn = function() {
   }, this);
 };
 
-// allows critters to move if the destinated square is empty(null) and sets the old position of the critter to null
+// allows critters to move (actions type = move) if the destinated square is empty(null) and sets the old position of the critter to null
 World.prototype.letAct = function(critter, vector) {
   var action = critter.act(new View(this, vector));
   if (action && action.type == 'move') {
@@ -162,11 +162,40 @@ World.prototype.checkDestination = function(action, vector) {
   };
 };
 
-
+function View(world, vector) {
+  this.world = world;
+  this.vector = vector; 
+}
+View.prototype.look = function(dir) {
+  var target = this.vector.plus(directions[dir]);
+  if (this.world.grid.isInside(target)) {
+    return charFromElement(this.world.grid.get(target)); 
+  } else {
+    return '#';
+  }
+};
+View.prototype.findAll = function(char) {
+  var found = [];
+  for (var dir in directions) {
+  if (this.look(dir) == char) {
+    found.push(dir); 
+  }
+    return found;
+  }
+};
+View.prototype.find = function(char) {
+  var found = this.findAll(char);
+  if (found.length == 0) {
+    return null;
+  }
+  return randomArrayElement(found);
+};
 
 
 function Wall() {}
 
 var test = new World(plan, {'#': Wall, "o": BouncingCritter});
-console.log(test.toString());
-
+for (var i = 0; i < 5; i++) {
+  test.turn();
+  console.log(test.toString());
+}
