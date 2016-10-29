@@ -218,9 +218,122 @@ WallFollower.prototype.act = function(view) {
 };
 
 function Wall() {}
+// test the world with wall-following critters and normal critters
+// var test = new World(plan, {'#': Wall, "~": WallFollower, "o": BouncingCritter});
+// for (var i = 0; i < 5; i++) {
+//   test.turn();
+//   console.log(test.toString());
+// }
 
-var test = new World(plan, {'#': Wall, "~": WallFollower, "o": BouncingCritter});
-for (var i = 0; i < 5; i++) {
-  test.turn();
-  console.log(test.toString());
+
+
+
+// more lifelike world with energy, reproduction and plants
+
+function LifelikeWorld(map, legend) {
+  World.call(this, map, legend);
 }
+
+LifelikeWorld.prototype = Object.create(World.prototype);
+
+LifelikeWorld.prototype.letAct = function(critter, vector) {
+  var action = critter.act(new View(this, vector));
+  var handled = action && action.type in actionTypes && actionTypes[action.type].call(this, critter, vector, action);
+
+  if (!handled) {
+    critter.energy -= 0.2;
+    if (critter.energy <= 0) {
+      this.grid.set(vector, null);
+    }
+  }
+};
+
+var actionTypes = Object.create(null);
+
+actionTypes.grow = function(critter) {
+  critter.energy += 0.5;
+  return true;
+};
+
+actionTypes.move = function(critter, vector, action) {
+  var dest = this.checkDestination(action, vector);
+  if (dest == null || critter.energy <= 1 || this.grid.get(dest) != null)
+    return false;
+  critter.energy -= 1;
+  this.grid.set(vector, null);
+  this.grid.set(dest, critter);
+  return true;
+};
+
+actionTypes.eat = function(critter, vector, action) {
+  var dest = this.checkDestination(action, vector);
+  var atDest = dest != null && this.grid.get(dest);
+  if (!atDest || atDest.energy == null)
+    return false;
+  critter.energy += atDest.energy;
+  this.grid.set(dest, null);
+  return true;
+};
+
+actionTypes.reproduce = function(critter, vector, action) {
+  var baby = elementFromChar(this.legend, critter.originChar);
+  var dest = this.checkDestination(action, vector);
+  if (dest == null || critter.energy <= 2 * baby.energy || this.grid.get(dest) != null)
+    return false;
+  critter.energy -= 2 * baby.energy;
+  this.grid.set(dest, baby);
+  return true;
+}
+
+function Plant() {
+  this.energy = 3 + Math.random() * 4;
+}
+
+Plant.prototype.act = function(view) {
+  if (this.energy > 15) {
+    var space = view.find(" ");
+    if (space)
+      return {type: "reproduce", direction: space};
+  }
+  if (this.energy < 20)
+    return {type: "grow"};
+};
+
+function PlantEater() {
+  this.energy = 20;
+}
+
+PlantEater.prototype.act = function(view) {
+  var space = view.find(" ");
+  if (this.energy > 60 && space)
+    return {type: "reproduce", direction: space};
+  var plant = view.find("*");
+  if (plant)
+    return {type: "eat", direction: plant};
+  if (space)
+    return {type: "move", direction: space};
+};
+
+var valley = new LifelikeWorld(
+  ["############################",
+     "#####                 ######",
+     "##   ***                **##",
+     "#   *##**         **  O  *##",
+     "#    ***     O    ##**    *#",
+     "#       O         ##***    #",
+     "#                 ##**     #",
+     "#   O       #*             #",
+     "#*          #**       O    #",
+     "#***        ##**    O    **#",
+     "##****     ###***       *###",
+     "############################"],
+    {"#": Wall,
+     "O": PlantEater,
+     "*": Plant}
+);
+
+
+// for (var i = 0; i < 5; i++) {
+//   valley.turn();
+//   console.log(valley.toString());
+// }
