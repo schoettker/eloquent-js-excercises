@@ -12,21 +12,36 @@ var MOUNTAINS = [
 function buildTable(data) {
   var table = document.createElement("table");
   var row = document.createElement("tr");
-  var headingCell = document.createElement("th");
-  var regularCell = document.createElement("td");
+  var header = Object.keys(data[0]);
   var text = function(content) {
     return document.createTextNode(content);
   };
 
-  headingCell.appendChild(text("Uberschrifrt"));
-  row.appendChild(headingCell);
-  return table.appendChild(row);
-}
+  table.appendChild(row);
 
-var list = document.createElement("ul");
-var listitem = document.createElement("li");
-listitem.appendChild(document.createTextNode("Hiiii"));
-list.appendChild(listitem);
+  for (var i = 0; i < header.length; i++) {
+    var headingCell = document.createElement("th");
+    row.appendChild(headingCell);
+    headingCell.appendChild(text(header[i]));
+  }
+  
+  for (var i = 0; i < data.length; i++) {
+    var row = document.createElement("tr");
+    table.appendChild(row);
+    for (var k = 0; k < Object.values(data[i]).length; k++) {
+      var regularCell = document.createElement("td");
+      row.appendChild(regularCell);
+      regularCell.appendChild(text(Object.values(data[i])[k]));
+    }
+  }
+  return table;
+};
+buildTable(MOUNTAINS);
 
-document.body.appendChild(list);
-document.body.appendChild(buildTable());
+// var list = document.createElement("ul");
+// var listitem = document.createElement("li");
+// listitem.appendChild(document.createTextNode("Hiiii"));
+// list.appendChild(listitem);
+
+// document.body.appendChild(list);
+document.body.appendChild(buildTable(MOUNTAINS));
