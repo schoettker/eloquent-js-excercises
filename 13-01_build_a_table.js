@@ -30,18 +30,17 @@ function buildTable(data) {
     table.appendChild(row);
     for (var k = 0; k < Object.values(data[i]).length; k++) {
       var regularCell = document.createElement("td");
+      var current = Object.values(data[i])[k];
       row.appendChild(regularCell);
-      regularCell.appendChild(text(Object.values(data[i])[k]));
+      regularCell.appendChild(text(current));
+
+      if (!isNaN(current)) {
+        console.log(current);
+      }
     }
   }
+
   return table;
 };
-buildTable(MOUNTAINS);
 
-// var list = document.createElement("ul");
-// var listitem = document.createElement("li");
-// listitem.appendChild(document.createTextNode("Hiiii"));
-// list.appendChild(listitem);
-
-// document.body.appendChild(list);
 document.body.appendChild(buildTable(MOUNTAINS));
