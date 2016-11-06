@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+  <input type="text" name="" id="" value="" />
+  <script type="text/javascript" charset="utf-8">
+    var field = document.querySelector("input");
+    field.addEventListener("keydown", function(event) {
+      if (/[qwx]/i.test(String.fromCharCode(event.keyCode)))
+        event.preventDefault();
+    });
+  </script>
+</body>
+</html>
