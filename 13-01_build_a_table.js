@@ -35,7 +35,7 @@ function buildTable(data) {
       regularCell.appendChild(text(current));
 
       if (!isNaN(current)) {
-        console.log(current);
+        regularCell.style.textAlign = "right";
       }
     }
   }
