@@ -1,3 +1,16 @@
+// Vector type to store positions
+function Vector(x, y) {
+  this.x = x; this.y = y;
+}
+// change pos by passing another vector with x and y coordinates
+Vector.prototype.plus = function(other) {
+  return new Vector(this.x + other.x, this.y + other.y);
+};
+// scales a vetor by a given amount
+Vector.prototype.times = function(times) {
+  return new Vector(this.x * times, this.y * times);
+};
+
 // builds level object, arguments = array of strings that define a level
 function Level(plan) {
   this.width = plan[0].length;
@@ -33,5 +46,38 @@ function Level(plan) {
 Level.prototype.isFinished = function() {
   return this.status != null && this.finishDelay < 0;
 };
+
+var actorChars = {
+  '@': Player,
+  'o': Coin,
+  '=': Lava, '|': Lava, 'v': Lava
+};
+
+function Player(pos) {
+  this.pos = pos.plus(new Vector (0, -0.5));
+  this.size = new Vector(0.8, 1.5);
+  this.speed = new Vector(0, 0);
+}
+
+function Lava(pos, ch) {
+  this.pos = pos;
+  this.size = new Vector(1, 1);
+  if (ch == '=')
+    this.speed = new Vector(2, 0); // horizontal moving lava
+  else if (ch == '|')
+    this.speed = new Vector(0, 2); // vertical moving lava
+  else if (ch == 'v') {
+    this.speed = new Vector(0, 3); // dripping lava
+    this.repeatPos = pos;
+  }
+}
+Lava.prototype.type = 'lava';
+
+function Coin(pos) {
+  this.basePos = this.pos = pos.plus(new Vector(0.2, 0.1));
+  this.size = new Vector(0.6, 0.6);
+  this.wobble = Math.random() * Math.PI * 2;
+}
+Coin.prototype.type = 'coin';
 
 
