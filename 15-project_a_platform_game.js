@@ -97,7 +97,7 @@ function DOMDisplay(parent, level) {
   this.drawFrame();
 }
 
-var scale = 20;
+var scale = 20; // scales our one unit based dimensions up because 1px would be too small
 
 DOMDisplay.prototype.drawBackground = function() {
   var table = elt('table', 'background');
@@ -110,4 +110,20 @@ DOMDisplay.prototype.drawBackground = function() {
     });
   });
   return table;
+;
+}
+
+// draws each actor by creating a DOM element for it 
+DOMDisplay.prototype.drawActors = function() {
+  var wrap = elt('div');
+  // sets elements position and size based on the current actor's props
+  this.level.actors.forEach(function(actor) {
+    var rect = wrap.appendChild(elt('div', 'actor ' + actor.type));
+
+    rect.style.width = actor.size.x * scale + 'px';
+    rect.style.height = actor.size.y * scale + 'px';
+    rect.style.left = actor.pos.x * scale + 'px';
+    rect.style.top = actor.pos.y * scale + 'px';
+  });
+  return wrap; 
 };
