@@ -8,8 +8,19 @@
   padding: 0;
 }
 
+.actor {
+  position: absolute;
+}
+
+.coin {
+  background: rgb(241, 229, 89);
+}
 .lava {
   background: rgb(255, 100, 100);
+}
+
+.player {
+  background: rgb(64, 64, 64);
 }
 
 .wall {
