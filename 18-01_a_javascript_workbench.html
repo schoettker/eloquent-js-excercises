@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+  <textarea rows="8" cols="40">return "Hi";</textarea>
+  <button>Run</button>
+  <pre></pre>
+
+  <script type="text/javascript" charset="utf-8">
+    var textarea = document.querySelector("textarea");
+    var button = document.querySelector("button");
+    var output = document.querySelector("pre");
+
+    button.addEventListener("click", function(event) {
+      var code = textarea.value;
+      try {
+        var result = new Function(code)();
+        output.textContent = result;
+      } catch (e) {
+        output.textContent = "Error: " + e;
+      }
+    });
+  </script>
+</body>
+</html>
