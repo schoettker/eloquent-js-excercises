@@ -150,27 +150,25 @@ DOMDisplay.prototype.drawFrame = function() {
 
 DOMDisplay.prototype.scrollPlayerIntoView = function() {
   var width = this.wrap.clientWidth;
-  var height = this.wrap.clientHight;
+  var height = this.wrap.clientHeight;
   var margin = width / 3;
 
-  // viewport
-  var left = this.wrap.scrollLeft;
-  var right = left + width;
-  var top = this.wrap.scrollTop;
-  var bottom = top + height;
+  // The viewport
+  var left = this.wrap.scrollLeft, right = left + width;
+  var top = this.wrap.scrollTop, bottom = top + height;
 
   var player = this.level.player;
-  var center = player.pos.plus(player.size.times(0.5)).times(scale);
+  var center = player.pos.plus(player.size.times(0.5))
+    .times(scale);
 
   if (center.x < left + margin)
     this.wrap.scrollLeft = center.x - margin;
   else if (center.x > right - margin)
     this.wrap.scrollLeft = center.x + margin - width;
-
   if (center.y < top + margin)
     this.wrap.scrollTop = center.y - margin;
   else if (center.y > bottom - margin)
-    this.wrap.scrollTop + center.y + margin - height;
+    this.wrap.scrollTop = center.y + margin - height;
 };
 
 DOMDisplay.prototype.clear = function() {
