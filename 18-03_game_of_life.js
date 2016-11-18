@@ -1,4 +1,5 @@
 var gridDiv = document.getElementById('grid');
+var button = document.getElementById('next');
 var width = 30;
 var height = 10;
 var currentGrid = [];
@@ -56,40 +57,65 @@ function gridFromCheckboxes(parentGrid) {
     currWidth += width;
     grid.push(line);
   }
+  return grid;
 }
 randomStartGrid();
 gridFromCheckboxes(gridDiv);
 
-function countAliveNeighbours(grid) {
-  // debugger
- for (var y = 0; y < grid.length; y++) {
-   for (var x = 0; x < grid[0].length; x++) {
-    var currentBox = grid[y][x];
-    var aliveNeighbours = 0;
-    for (var i = -1; i <= 1; i++) {
-      for (var j = -1; j <= 1; j++) {
-        var coord1 = Math.min(Math.max(0, i), grid.length);
-        var coord2 = Math.min(Math.max(0, j), grid[0].length);
-        // if (grid[coord1][coord2] == true && (coord1 != y || coord2 != x))
-        //   aliveNeighbours += 1;
-      // }
-        // console.log('i is:' + i);
-        // console.log('y is:' + y);
-          if ((0 <= i + y && 0 <= j + x) &&
-              (grid.length > i + y && grid[0].length > j + x) &&
-              (grid[i+y][j+x] == true) &&
-              (i+y != y || j+x != x))
-          aliveNeighbours += 1;
+function countAliveNeighbours(grid, x, y) {
+  var aliveNeighbours = 0;
+  for (var i = -1; i <= 1; i++) {
+    for (var j = -1; j <= 1; j++) {
+      var coord1 = Math.min(Math.max(0, i), grid.length);
+      var coord2 = Math.min(Math.max(0, j), grid[0].length);
+      if ((0 <= i + y && 0 <= j + x) &&
+        (grid.length > i + y && grid[0].length > j + x) &&
+          (grid[i+y][j+x] == true) &&
+          (i+y != y || j+x != x))
+        aliveNeighbours += 1;
     }
-    }
-     // if (currentBox == true)
-     //   aliveNeighbours -= 1;
-    console.log(aliveNeighbours);
-   }
- } 
+  }
+  return aliveNeighbours;
 }
 
-// var testarr = [[true, true, false]];
-var testarr = [[true, true, false],
-               [true, false, true]];
-countAliveNeighbours(testarr);
+var testarr = [
+  [true,true,true,false],
+  [false,false,false,true],
+  [true,false,true,false],
+  [false,true,false,true]
+]
+// countAliveNeighbours(testarr);
+
+function nextGen(grid) {
+}
+function getNextState(grid) {
+  var nextGrid = [];
+  for (var y = 0; y < grid.length; y++) {
+    var line = [];
+    for (var x = 0; x < grid[0].length; x++) {
+      var currentBox = grid[y][x];
+      var aliveNeighbours = countAliveNeighbours(grid, x, y);
+      if (currentBox == true && aliveNeighbours < 2) {
+        nextState = false; // Loneliness 
+      } else if (currentBox == true && aliveNeighbours > 3) {
+        nextState = false; // Overpopulation
+      } else if (currentBox == false && aliveNeighbours == 3) {
+        nextState = true; // Reproduction
+      } else {
+        nextState = currentBox; // Stasis
+      }
+      line.push(nextState);
+    }
+    nextGrid.push(line);
+  }
+  return nextGrid;
+}
+
+// console.log(getNextState(testarr));
+
+button.addEventListener('click', function(event){
+  var next = getNextState(gridFromCheckboxes(gridDiv));
+  while (gridDiv.firstChild)
+    gridDiv.removeChild(gridDiv.firstChild);
+  checkboxesFromGrid(next);
+});
