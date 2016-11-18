@@ -113,9 +113,23 @@ function getNextState(grid) {
 
 // console.log(getNextState(testarr));
 
-button.addEventListener('click', function(event){
+function turn() {
   var next = getNextState(gridFromCheckboxes(gridDiv));
   while (gridDiv.firstChild)
     gridDiv.removeChild(gridDiv.firstChild);
   checkboxesFromGrid(next);
+}
+
+button.addEventListener('click', function(event){
+  turn();
+});
+
+var running = null;
+document.querySelector("#run").addEventListener("click", function() {
+  if (running) {
+    clearInterval(running);
+    running = null;
+  } else {
+    running = setInterval(turn, 400);
+  }
 });
