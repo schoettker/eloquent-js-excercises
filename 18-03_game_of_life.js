@@ -77,13 +77,13 @@ function countAliveNeighbours(grid) {
         // console.log('y is:' + y);
           if ((0 <= i + y && 0 <= j + x) &&
               (grid.length > i + y && grid[0].length > j + x) &&
-              (grid[i+y][j+x] == true))// &&
-              // (i != y || j != x))
+              (grid[i+y][j+x] == true) &&
+              (i+y != y || j+x != x))
           aliveNeighbours += 1;
     }
     }
-     if (currentBox == true)
-       aliveNeighbours -= 1;
+     // if (currentBox == true)
+     //   aliveNeighbours -= 1;
     console.log(aliveNeighbours);
    }
  } 
