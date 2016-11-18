@@ -59,3 +59,37 @@ function gridFromCheckboxes(parentGrid) {
 }
 randomStartGrid();
 gridFromCheckboxes(gridDiv);
+
+function countAliveNeighbours(grid) {
+  // debugger
+ for (var y = 0; y < grid.length; y++) {
+   for (var x = 0; x < grid[0].length; x++) {
+    var currentBox = grid[y][x];
+    var aliveNeighbours = 0;
+    for (var i = -1; i <= 1; i++) {
+      for (var j = -1; j <= 1; j++) {
+        var coord1 = Math.min(Math.max(0, i), grid.length);
+        var coord2 = Math.min(Math.max(0, j), grid[0].length);
+        // if (grid[coord1][coord2] == true && (coord1 != y || coord2 != x))
+        //   aliveNeighbours += 1;
+      // }
+        // console.log('i is:' + i);
+        // console.log('y is:' + y);
+          if ((0 <= i + y && 0 <= j + x) &&
+              (grid.length > i + y && grid[0].length > j + x) &&
+              (grid[i+y][j+x] == true))// &&
+              // (i != y || j != x))
+          aliveNeighbours += 1;
+    }
+    }
+     if (currentBox == true)
+       aliveNeighbours -= 1;
+    console.log(aliveNeighbours);
+   }
+ } 
+}
+
+// var testarr = [[true, true, false]];
+var testarr = [[true, true, false],
+               [true, false, true]];
+countAliveNeighbours(testarr);
